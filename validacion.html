@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Validación de Pruebas</title>
+  <link rel="stylesheet" href="https://optimus.multilab.com.pe/bootstrap/css/bootstrap.css">
+</head>
+<body>
+  <a href="index.html" class="btn btn-default">
+    <i class="fas fa-arrow-left"></i> Volver al inicio
+  </a>
+
+  <div class="container">
+    <h2 class="text-center mt-4">Panel de Validación Automatizada</h2>
+    <table class="table table-bordered mt-4">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre del examen</th>
+          <th>Prioridad</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>001</td>
+          <td>Hemograma</td>
+          <td>Alta</td>
+          <td><span class="label label-warning">Pendiente</span></td>
+          <td><button class="btn btn-success">Validar</button></td>
+        </tr>
+        <tr>
+          <td>002</td>
+          <td>Glucosa</td>
+          <td>Baja</td>
+          <td><span class="label label-success">Completado</span></td>
+          <td><button class="btn btn-secondary" disabled>Validado</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
