@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Estadísticas de Validación - Calidad</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Estilos de Optimus -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Play">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://optimus.multilab.com.pe/bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="https://optimus.multilab.com.pe/bootstrap/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://optimus.multilab.com.pe/dist/css/AdminLTE.css">
+  <link rel="stylesheet" href="https://optimus.multilab.com.pe/dist/css/skins/skin-green.css">
+  <link rel="stylesheet" href="https://optimus.multilab.com.pe/dist/custom/css/custom-optimus.1.1.css">
+  <link rel="stylesheet" href="https://optimus.multilab.com.pe/bootstrap/css/inicio.css">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://optimus.multilab.com.pe/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+</head>
+
+<body class="skin-green sidebar-mini">
+<div class="wrapper">
+  <section class="content-header">
+    <h1>
+      Estadísticas de Validación
+      <small>Módulo de Calidad</small>
+    </h1>
+    <a href="index.html" class="btn btn-light">
+      <i class="fas fa-arrow-left"></i> Volver al inicio
+    </a>
+  </section>
+
+  <section class="content">
+    <div class="box box-success box-solid">
+      <div class="box-header with-border">
+        <h3 class="box-title"><i class="fas fa-chart-pie"></i> Indicadores</h3>
+      </div>
+      <div class="box-body">
+        <!-- Filtros -->
+        <div class="row mb-3">
+          <div class="col-md-2">
+            <label>Desde:</label>
+            <input type="date" class="form-control" id="filtro_fecha_desde">
+          </div>
+          <div class="col-md-2">
+            <label>Hasta:</label>
+            <input type="date" class="form-control" id="filtro_fecha_hasta">
+          </div>
+          <div class="col-md-4">
+            <label>Sedes:</label>
+            <select class="form-control" id="filtro_sede" multiple="multiple" style="width: 100%;">
+              <option value="Breña">Breña</option>
+              <option value="Callao">Callao</option>
+              <option value="Chorrillos">Chorrillos</option>
+              <option value="Comas">Comas</option>
+              <option value="Ejercito">Ejercito</option>
+              <option value="La Molina">La Molina</option>
+              <option value="Lince">Lince</option>
+              <option value="Los Olivos">Los Olivos</option>
+              <option value="Magdalena">Magdalena</option>
+              <option value="Miraflores 28">Miraflores 28</option>
+              <option value="Proceres">Proceres</option>
+              <option value="Providencia">Providencia</option>
+              <option value="Pueblo Libre">Pueblo Libre</option>
+              <option value="Puente Piedra">Puente Piedra</option>
+              <option value="Republica de Panama">Republica de Panama</option>
+              <option value="San Borja">San Borja</option>
+              <option value="San Isidro">San Isidro</option>
+              <option value="San Miguel">San Miguel</option>
+              <option value="SMP">SMP</option>
+              <option value="Surco">Surco</option>
+              <option value="Zarate">Zarate</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label>Validador:</label>
+            <select class="form-control" id="filtro_validador" multiple="multiple" style="width: 100%;">
+              <option value="Kelly Rojas">Kelly Rojas</option>
+              <option value="Jonathan Sanchez">Jonathan Sanchez</option>
+              <option value="Alexandra Aguilar">Alexandra Aguilar</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label>Turno:</label>
+            <select class="form-control" id="filtro_turno" multiple="multiple" style="width: 100%;">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label>Prioridad:</label>
+            <select class="form-control" id="filtro_prioridad" multiple="multiple" style="width: 100%;">
+              <option value="Alta">Alta</option>
+              <option value="Media">Media</option>
+              <option value="Baja">Baja</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-2">
+            <button class="btn btn-primary btn-block" id="aplicar_filtros"><i class="fas fa-filter"></i> Aplicar</button>
+          </div>
+        </div>
+
+        <!-- Selector de gráfico -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label>Tipo de gráfico:</label>
+            <select class="form-control" id="tipo_grafico">
+              <option value="doughnut">Porcentaje</option>
+              <option value="barras">Gráfico de Barras</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tabla resumen -->
+        <div class="table-responsive mb-4">
+          <table class="table table-bordered text-center">
+            <thead>
+              <tr class="bg-light">
+                <th>Asignadas</th>
+                <th>A Tiempo</th>
+                <th>Tarde</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="total_asignadas">-</td>
+                <td id="total_tiempo">-</td>
+                <td id="total_tarde">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Gráfico -->
+        <div class="text-center">
+          <canvas id="grafico_puntualidad" height="100"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#filtro_sede').select2({ placeholder: "Selecciona sedes", allowClear: true });
+    $('#filtro_validador').select2({ placeholder: "Selecciona validadores", allowClear: true });
+    $('#filtro_turno').select2({ placeholder: "Selecciona turnos", allowClear: true });
+    $('#filtro_prioridad').select2({ placeholder: "Selecciona prioridad", allowClear: true });
+  });
+
+  document.getElementById('aplicar_filtros').addEventListener('click', function() {
+    Papa.parse('datos.csv', {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        const datos = results.data;
+
+        const sedeFiltro = $('#filtro_sede').val() || [];
+        const validadorFiltro = $('#filtro_validador').val() || [];
+        const turnoFiltro = $('#filtro_turno').val() || [];
+        const prioridadFiltro = $('#filtro_prioridad').val() || [];
+        const desde = document.getElementById('filtro_fecha_desde').value;
+        const hasta = document.getElementById('filtro_fecha_hasta').value;
+        const tipoGrafico = document.getElementById('tipo_grafico').value;
+
+        const parseFecha = (f) => {
+          const [d, m, y] = f.split('/');
+          return new Date(`${y}-${m}-${d}`);
+        };
+
+        const filtrados = datos.filter(d => {
+          const fecha = parseFecha(d.Fecha);
+          return (!sedeFiltro.length || sedeFiltro.includes(d.Sede)) &&
+                 (!validadorFiltro.length || validadorFiltro.includes(d["Validador asignado"])) &&
+                 (!turnoFiltro.length || turnoFiltro.includes(d.Turno)) &&
+                 (!prioridadFiltro.length || prioridadFiltro.includes(d["Prioridad de la prueba"])) &&
+                 (!desde || fecha >= new Date(desde)) &&
+                 (!hasta || fecha <= new Date(hasta));
+        });
+
+        const total = filtrados.length;
+        const puntuales = filtrados.filter(d => d.Cumplimiento === "1").length;
+        const impuntuales = total - puntuales;
+        const porcentajePuntual = total ? (puntuales / total * 100).toFixed(2) : 0;
+        const porcentajeImpuntual = (100 - porcentajePuntual).toFixed(2);
+
+        document.getElementById('total_asignadas').innerText = total;
+        document.getElementById('total_tiempo').innerText = puntuales;
+        document.getElementById('total_tarde').innerText = impuntuales;
+
+        const ctx = document.getElementById('grafico_puntualidad').getContext('2d');
+        if (window.grafico) window.grafico.destroy();
+
+        if (tipoGrafico === "doughnut") {
+          window.grafico = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Puntuales', 'Impuntuales'],
+              datasets: [{
+                data: [porcentajePuntual, porcentajeImpuntual],
+                backgroundColor: ['#28a745', '#dc3545']
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { position: 'bottom' },
+                title: { display: true, text: 'Porcentaje de Validaciones Puntuales' }
+              }
+            }
+          });
+        } else {
+          const validadoresUnicos = [...new Set(filtrados.map(d => d["Validador asignado"]))];
+          const puntualesPorValidador = validadoresUnicos.map(v => filtrados.filter(d => d["Validador asignado"] === v && d.Cumplimiento === "1").length);
+          const impuntualesPorValidador = validadoresUnicos.map(v => filtrados.filter(d => d["Validador asignado"] === v && d.Cumplimiento === "0").length);
+
+          window.grafico = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: validadoresUnicos,
+              datasets: [
+                {
+                  label: 'Puntuales',
+                  data: puntualesPorValidador,
+                  backgroundColor: '#28a745'
+                },
+                {
+                  label: 'Impuntuales',
+                  data: impuntualesPorValidador,
+                  backgroundColor: '#dc3545'
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { position: 'bottom' },
+                title: { display: true, text: 'Validaciones por Validador' }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>
