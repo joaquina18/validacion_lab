@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <title>Estadísticas de Validación - Calidad</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Estilos de Optimus -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Play">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://optimus.multilab.com.pe/bootstrap/css/bootstrap.css">
@@ -16,12 +14,23 @@
   <link rel="stylesheet" href="https://optimus.multilab.com.pe/bootstrap/css/inicio.css">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://optimus.multilab.com.pe/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+  <style>
+    .graficos-flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .graficos-flex > div {
+      flex: 0 1 300px;
+      text-align: center;
+    }
+  </style>
 </head>
-
 <body class="skin-green sidebar-mini">
 <div class="wrapper">
   <section class="content-header">
-    <h1>
+    <h1 style="font-size: 32px; font-weight: bold;">
       Estadísticas de Validación
       <small>Módulo de Calidad</small>
     </h1>
@@ -36,7 +45,7 @@
         <h3 class="box-title"><i class="fas fa-chart-pie"></i> Indicadores</h3>
       </div>
       <div class="box-body">
-        <!-- Filtros -->
+
         <div class="row mb-3">
           <div class="col-md-2">
             <label>Desde:</label>
@@ -48,74 +57,36 @@
           </div>
           <div class="col-md-4">
             <label>Sedes:</label>
-            <select class="form-control" id="filtro_sede" multiple="multiple" style="width: 100%;">
-              <option value="Breña">Breña</option>
-              <option value="Callao">Callao</option>
-              <option value="Chorrillos">Chorrillos</option>
-              <option value="Comas">Comas</option>
-              <option value="Ejercito">Ejercito</option>
-              <option value="La Molina">La Molina</option>
-              <option value="Lince">Lince</option>
-              <option value="Los Olivos">Los Olivos</option>
-              <option value="Magdalena">Magdalena</option>
-              <option value="Miraflores 28">Miraflores 28</option>
-              <option value="Proceres">Proceres</option>
-              <option value="Providencia">Providencia</option>
-              <option value="Pueblo Libre">Pueblo Libre</option>
-              <option value="Puente Piedra">Puente Piedra</option>
-              <option value="Republica de Panama">Republica de Panama</option>
-              <option value="San Borja">San Borja</option>
-              <option value="San Isidro">San Isidro</option>
-              <option value="San Miguel">San Miguel</option>
-              <option value="SMP">SMP</option>
-              <option value="Surco">Surco</option>
-              <option value="Zarate">Zarate</option>
-            </select>
+            <select class="form-control" id="filtro_sede" multiple="multiple" style="width: 100%;"></select>
           </div>
           <div class="col-md-4">
             <label>Validador:</label>
-            <select class="form-control" id="filtro_validador" multiple="multiple" style="width: 100%;">
-              <option value="Kelly Rojas">Kelly Rojas</option>
-              <option value="Jonathan Sanchez">Jonathan Sanchez</option>
-              <option value="Alexandra Aguilar">Alexandra Aguilar</option>
-            </select>
+            <select class="form-control" id="filtro_validador" multiple="multiple" style="width: 100%;"></select>
           </div>
           <div class="col-md-2">
             <label>Turno:</label>
-            <select class="form-control" id="filtro_turno" multiple="multiple" style="width: 100%;">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
+            <select class="form-control" id="filtro_turno" multiple="multiple" style="width: 100%;"></select>
           </div>
           <div class="col-md-2">
             <label>Prioridad:</label>
-            <select class="form-control" id="filtro_prioridad" multiple="multiple" style="width: 100%;">
-              <option value="Alta">Alta</option>
-              <option value="Media">Media</option>
-              <option value="Baja">Baja</option>
-            </select>
+            <select class="form-control" id="filtro_prioridad" multiple="multiple" style="width: 100%;"></select>
           </div>
         </div>
+
         <div class="row mb-3">
           <div class="col-md-2">
             <button class="btn btn-primary btn-block" id="aplicar_filtros"><i class="fas fa-filter"></i> Aplicar</button>
           </div>
-        </div>
-
-        <!-- Selector de gráfico -->
-        <div class="row mb-3">
-          <div class="col-md-4">
-            <label>Tipo de gráfico:</label>
-            <select class="form-control" id="tipo_grafico">
-              <option value="doughnut">Porcentaje</option>
-              <option value="barras">Gráfico de Barras</option>
-            </select>
+          <div class="col-md-3">
+            <div class="form-check" style="margin-top: 30px;">
+              <input class="form-check-input" type="checkbox" id="desagregar_validador">
+              <label class="form-check-label" for="desagregar_validador">
+                Desagregar por validador
+              </label>
+            </div>
           </div>
         </div>
 
-        <!-- Tabla resumen -->
         <div class="table-responsive mb-4">
           <table class="table table-bordered text-center">
             <thead>
@@ -127,18 +98,76 @@
             </thead>
             <tbody>
               <tr>
-                <td id="total_asignadas">-</td>
-                <td id="total_tiempo">-</td>
-                <td id="total_tarde">-</td>
+                <td id="total_asignadas">0</td>
+                <td id="total_tiempo">0</td>
+                <td id="total_tarde">0</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- Gráfico -->
-        <div class="text-center">
-          <canvas id="grafico_puntualidad" height="100"></canvas>
+        <div class="box box-default box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">Porcentaje de cumplimiento</h3>
+            <div class="box-tools pull-right">
+              <button class="btn btn-box-tool" type="button" data-toggle="collapse" data-target="#contenedor_grafico"><i class="fas fa-minus"></i></button>
+            </div>
+          </div>
+          <div id="contenedor_grafico" class="collapse">
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label>Tipo de gráfico:</label>
+                <select class="form-control" id="tipo_grafico">
+                  <option value="doughnut">Porcentaje</option>
+                  <option value="barras">Gráfico de Barras</option>
+                </select>
+              </div>
+            </div>
+            <div class="graficos-flex" id="contenedor_canvas"></div>
+          </div>
         </div>
+
+        <div class="box box-default box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">Validaciones asignadas por validador</h3>
+            <div class="box-tools pull-right">
+              <button class="btn btn-box-tool" type="button" data-toggle="collapse" data-target="#contenedor_asignadas"><i class="fas fa-minus"></i></button>
+            </div>
+          </div>
+          <div id="contenedor_asignadas" class="collapse">
+            <div class="graficos-flex" id="contenedor_canvas_asignadas"></div>
+          </div>
+        </div>
+
+        <div class="box box-default box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">Gráfica P - Porcentaje de Cumplimiento por Semana</h3>
+            <div class="box-tools pull-right">
+              <button class="btn btn-box-tool" type="button" data-toggle="collapse" data-target="#contenedor_grafica_p"><i class="fas fa-minus"></i></button>
+            </div>
+          </div>
+          <div id="contenedor_grafica_p" class="collapse">
+            <div class="graficos-flex" id="contenedor_canvas_grafica_p">
+              <canvas id="grafico_p" height="60"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="box box-default box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">Análisis de Capacidad (Cp)</h3>
+            <div class="box-tools pull-right">
+              <button class="btn btn-box-tool" type="button" data-toggle="collapse" data-target="#contenedor_cp"><i class="fas fa-minus"></i></button>
+            </div>
+          </div>
+        <div id="contenedor_cp" class="collapse">
+          <div class="graficos-flex" id="contenedor_canvas_cp">
+            <canvas id="grafico_cp" height="60"></canvas>
+          </div>
+        </div>
+        </div>
+        
+
       </div>
     </div>
   </section>
@@ -147,115 +176,245 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-<script>
-  $(document).ready(function() {
-    $('#filtro_sede').select2({ placeholder: "Selecciona sedes", allowClear: true });
-    $('#filtro_validador').select2({ placeholder: "Selecciona validadores", allowClear: true });
-    $('#filtro_turno').select2({ placeholder: "Selecciona turnos", allowClear: true });
-    $('#filtro_prioridad').select2({ placeholder: "Selecciona prioridad", allowClear: true });
-  });
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
 
-  document.getElementById('aplicar_filtros').addEventListener('click', function() {
+<script>
+$(document).ready(function () {
+  const sedes = ["Breña", "Callao", "Chorrillos", "Comas", "Ejercito", "La Molina", "Lince", "Los Olivos", "Magdalena", "Miraflores 28", "Proceres", "Providencia", "Pueblo Libre", "Puente Piedra", "Republica de Panama", "San Borja", "San Isidro", "San Miguel", "SMP", "Surco", "Zarate"];
+  const validadores = ["Kelly Rojas", "Jonathan Sanchez", "Alexandra Aguilar"];
+  const turnos = ["1", "2", "3", "4"];
+  const prioridades = ["Alta", "Media", "Baja"];
+
+  // Llenar filtros
+  sedes.forEach(s => $('#filtro_sede').append(`<option value="${s}">${s}</option>`));
+  validadores.forEach(v => $('#filtro_validador').append(`<option value="${v}">${v}</option>`));
+  turnos.forEach(t => $('#filtro_turno').append(`<option value="${t}">${t}</option>`));
+  prioridades.forEach(p => $('#filtro_prioridad').append(`<option value="${p}">${p}</option>`));
+
+  $('#filtro_sede').select2({ placeholder: "Selecciona sedes", allowClear: true });
+  $('#filtro_validador').select2({ placeholder: "Selecciona validadores", allowClear: true });
+  $('#filtro_turno').select2({ placeholder: "Selecciona turnos", allowClear: true });
+  $('#filtro_prioridad').select2({ placeholder: "Selecciona prioridad", allowClear: true });
+
+  $('#aplicar_filtros').on('click', function () {
     Papa.parse('datos.csv', {
       download: true,
       header: true,
       skipEmptyLines: true,
-      complete: function(results) {
+      complete: function (results) {
         const datos = results.data;
-
-        const sedeFiltro = $('#filtro_sede').val() || [];
-        const validadorFiltro = $('#filtro_validador').val() || [];
-        const turnoFiltro = $('#filtro_turno').val() || [];
-        const prioridadFiltro = $('#filtro_prioridad').val() || [];
-        const desde = document.getElementById('filtro_fecha_desde').value;
-        const hasta = document.getElementById('filtro_fecha_hasta').value;
-        const tipoGrafico = document.getElementById('tipo_grafico').value;
-
-        const parseFecha = (f) => {
-          const [d, m, y] = f.split('/');
-          return new Date(`${y}-${m}-${d}`);
-        };
-
-        const filtrados = datos.filter(d => {
-          const fecha = parseFecha(d.Fecha);
-          return (!sedeFiltro.length || sedeFiltro.includes(d.Sede)) &&
-                 (!validadorFiltro.length || validadorFiltro.includes(d["Validador asignado"])) &&
-                 (!turnoFiltro.length || turnoFiltro.includes(d.Turno)) &&
-                 (!prioridadFiltro.length || prioridadFiltro.includes(d["Prioridad de la prueba"])) &&
-                 (!desde || fecha >= new Date(desde)) &&
-                 (!hasta || fecha <= new Date(hasta));
-        });
-
-        const total = filtrados.length;
-        const puntuales = filtrados.filter(d => d.Cumplimiento === "1").length;
+        const total = datos.length;
+        const puntuales = datos.filter(d => d.Cumplimiento === "1").length;
         const impuntuales = total - puntuales;
-        const porcentajePuntual = total ? (puntuales / total * 100).toFixed(2) : 0;
-        const porcentajeImpuntual = (100 - porcentajePuntual).toFixed(2);
 
-        document.getElementById('total_asignadas').innerText = total;
-        document.getElementById('total_tiempo').innerText = puntuales;
-        document.getElementById('total_tarde').innerText = impuntuales;
+        $('#total_asignadas').text(total);
+        $('#total_tiempo').text(puntuales);
+        $('#total_tarde').text(impuntuales);
 
-        const ctx = document.getElementById('grafico_puntualidad').getContext('2d');
-        if (window.grafico) window.grafico.destroy();
+        const tipoGrafico = $('#tipo_grafico').val();
+        const desagregar = $('#desagregar_validador').is(':checked');
+        const validadoresSeleccionados = $('#filtro_validador').val() || [];
+        const contenedor = $('#contenedor_canvas');
+        contenedor.empty();
 
-        if (tipoGrafico === "doughnut") {
-          window.grafico = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-              labels: ['Puntuales', 'Impuntuales'],
-              datasets: [{
-                data: [porcentajePuntual, porcentajeImpuntual],
-                backgroundColor: ['#28a745', '#dc3545']
-              }]
-            },
-            options: {
-              responsive: true,
-              plugins: {
-                legend: { position: 'bottom' },
-                title: { display: true, text: 'Porcentaje de Validaciones Puntuales' }
-              }
-            }
-          });
-        } else {
-          const validadoresUnicos = [...new Set(filtrados.map(d => d["Validador asignado"]))];
-          const puntualesPorValidador = validadoresUnicos.map(v => filtrados.filter(d => d["Validador asignado"] === v && d.Cumplimiento === "1").length);
-          const impuntualesPorValidador = validadoresUnicos.map(v => filtrados.filter(d => d["Validador asignado"] === v && d.Cumplimiento === "0").length);
+        if (!desagregar) {
+          contenedor.append('<canvas id="grafico_puntualidad" height="25"></canvas>');
+          const ctx = document.getElementById('grafico_puntualidad').getContext('2d');
 
-          window.grafico = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: validadoresUnicos,
-              datasets: [
-                {
-                  label: 'Puntuales',
-                  data: puntualesPorValidador,
-                  backgroundColor: '#28a745'
-                },
-                {
-                  label: 'Impuntuales',
-                  data: impuntualesPorValidador,
-                  backgroundColor: '#dc3545'
-                }
-              ]
-            },
-            options: {
-              responsive: true,
-              plugins: {
-                legend: { position: 'bottom' },
-                title: { display: true, text: 'Validaciones por Validador' }
+          if (tipoGrafico === "doughnut") {
+            new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Puntuales', 'Impuntuales'],
+                datasets: [{ data: [puntuales, impuntuales], backgroundColor: ['#28a745', '#dc3545'] }]
               },
-              scales: {
-                y: {
-                  beginAtZero: true
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: { position: 'bottom' },
+                  title: { display: true, text: 'Porcentaje de Validaciones Puntuales' }
                 }
               }
+            });
+          } else {
+            new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ['Puntuales', 'Impuntuales'],
+                datasets: [{ label: 'Cantidad', data: [puntuales, impuntuales], backgroundColor: ['#28a745', '#dc3545'] }]
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: { position: 'bottom' },
+                  title: { display: true, text: 'Validaciones por Tipo' }
+                },
+                scales: { y: { beginAtZero: true } }
+              }
+            });
+          }
+        } else {
+          const validadoresUnicos = [...new Set(datos.map(d => d["Validador asignado"]))];
+          validadoresUnicos.forEach(v => {
+            if (validadoresSeleccionados.length === 0 || validadoresSeleccionados.includes(v)) {
+              const div = $('<div>').html(`<h4>${v}</h4><canvas height="25"></canvas>`);
+              contenedor.append(div);
+
+              const ctx = div.find('canvas')[0].getContext('2d');
+              const datosValidador = datos.filter(d => d["Validador asignado"] === v);
+              const totalV = datosValidador.length;
+              const puntualesV = datosValidador.filter(d => d.Cumplimiento === "1").length;
+              const impuntualesV = totalV - puntualesV;
+
+              new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                  labels: ['Puntuales', 'Impuntuales'],
+                  datasets: [{ data: [puntualesV, impuntualesV], backgroundColor: ['#28a745', '#dc3545'] }]
+                },
+                options: {
+                  responsive: true,
+                  plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: true, text: `Validaciones de ${v}` }
+                  }
+                }
+              });
             }
           });
         }
+
+        // Gráfico de Validaciones Asignadas
+        const contenedorAsignadas = $('#contenedor_canvas_asignadas');
+        contenedorAsignadas.empty();
+
+        const validadoresUnicos = [...new Set(datos.map(d => d["Validador asignado"]))];
+        const cantidades = validadoresUnicos.map(v => datos.filter(d => d["Validador asignado"] === v).length);
+
+        contenedorAsignadas.append('<canvas id="grafico_asignadas" height="25"></canvas>');
+        const ctxAsignadas = document.getElementById('grafico_asignadas').getContext('2d');
+
+        new Chart(ctxAsignadas, {
+          type: 'bar',
+          data: {
+            labels: validadoresUnicos,
+            datasets: [{ label: 'Asignadas', data: cantidades, backgroundColor: '#007bff' }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' },
+              title: { display: true, text: 'Total de Validaciones Asignadas por Validador' }
+            },
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+
+        // Gráfico P - Porcentaje por semana
+        const semanas = {};
+        datos.forEach(d => {
+          const fecha = new Date(d.Fecha.split('/').reverse().join('-'));
+          const semana = getNumeroSemana(fecha);
+          if (!semanas[semana]) semanas[semana] = { total: 0, puntuales: 0 };
+          semanas[semana].total++;
+          if (d.Cumplimiento === "1") semanas[semana].puntuales++;
+        });
+
+        const etiquetas = Object.keys(semanas).sort((a, b) => a - b);
+        const proporciones = etiquetas.map(s => semanas[s].puntuales / semanas[s].total);
+        const promedio = proporciones.reduce((acc, v) => acc + v, 0) / proporciones.length;
+        const desviacion = Math.sqrt(proporciones.map(p => Math.pow(p - promedio, 2)).reduce((a, b) => a + b, 0) / proporciones.length);
+
+        // Gráfico Cp
+        const LSL = 0.90;
+        const USL = 0.95;
+        const Cp = (USL - LSL) / (6 * desviacion);
+        const Cpk = Math.min((USL - promedio), (promedio - LSL)) / (3 * desviacion);
+
+        const contenedorCp = $('#contenedor_canvas_cp');
+        contenedorCp.empty();
+        contenedorCp.append('<canvas id="grafico_cp" height="60"></canvas>');
+
+        const ctxCp = document.getElementById('grafico_cp').getContext('2d');
+        const minX = Math.min(...proporciones) - 0.05;
+        const maxX = Math.max(...proporciones) + 0.05;
+
+        const puntos = [];
+        for (let x = minX; x <= maxX; x += 0.001) {
+          const y = (1 / (desviacion * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - promedio) / desviacion, 2));
+          puntos.push({ x, y });
+        }
+
+        new Chart(ctxCp, {
+          type: 'line',
+          data: {
+            labels: puntos.map(p => (p.x * 100).toFixed(2)),
+            datasets: [{
+              label: 'Distribución Normal',
+              data: puntos.map(p => p.y),
+              borderColor: 'blue',
+              fill: false
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' },
+              title: { display: true, text: `Gráfico Cp: Cp = ${Cp.toFixed(3)}, Cpk = ${Cpk.toFixed(3)}` }
+            },
+            scales: {
+              x: { title: { display: true, text: 'Porcentaje de Cumplimiento (%)' } },
+              y: { beginAtZero: true, title: { display: true, text: 'Densidad' } }
+            }
+          }
+        });
+
+        // Gráfico P por semana
+        const contenedorGraficaP = $('#contenedor_canvas_grafica_p');
+        contenedorGraficaP.empty();
+        contenedorGraficaP.append('<canvas id="grafico_p" height="60"></canvas>');
+
+        const ctxP = document.getElementById('grafico_p').getContext('2d');
+        new Chart(ctxP, {
+          type: 'line',
+          data: {
+            labels: etiquetas,
+            datasets: [{
+              label: 'Porcentaje Puntualidad',
+              data: proporciones,
+              fill: false,
+              borderColor: '#28a745',
+              tension: 0.1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' },
+              title: { display: true, text: 'Gráfica P - Porcentaje de Cumplimiento por Semana' }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 1,
+                ticks: { callback: v => `${(v * 100).toFixed(0)}%` }
+              }
+            }
+          }
+        });
+
+        $('#contenedor_grafico').collapse('show');
       }
     });
   });
+
+  function getNumeroSemana(fecha) {
+    const primerDia = new Date(fecha.getFullYear(), 0, 1);
+    const diferencia = fecha - primerDia;
+    return Math.ceil((((diferencia / 86400000) + primerDia.getDay() + 1) / 7));
+  }
+});
+
 </script>
 </body>
 </html>
