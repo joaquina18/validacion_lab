@@ -6,9 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="https://optimus.multilab.com.pe/bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Play">
   <style>
     body {
-      background-color: #222;
+      background-color: #43ac3a;
       color: white;
       font-family: 'Play', sans-serif;
       text-align: center;
@@ -24,6 +25,7 @@
     h1 {
       margin-bottom: 20px;
       font-size: 2rem;
+      font-family: 'Play', sans-serif;
     }
     .btn-simular {
       margin-top: 20px;
@@ -49,6 +51,16 @@
     <option value="validador">Validador</option>
   </select>
 
+  <div style="margin-top:18px; text-align:left;">
+    <label style="font-weight:600;">Visualización:</label><br>
+    <div style="margin-top:6px;">
+      <input type="radio" id="visDashboard" name="visualizacion" value="dashboard" checked>
+      <label for="visDashboard" style="margin-right:18px;">Desde el dashboard</label>
+      <input type="radio" id="visResultados" name="visualizacion" value="resultados">
+      <label for="visResultados">Desde los resultados</label>
+    </div>
+  </div>
+
   <button class="btn btn-success btn-simular" id="iniciarBtn">
     <i class="fas fa-play"></i> Iniciar Simulación
   </button>
@@ -58,6 +70,7 @@
 document.getElementById('iniciarBtn').addEventListener('click', () => {
   const nombre = document.getElementById('nombre').value.trim();
   const rol = document.getElementById('rol').value;
+  const visualizacion = document.querySelector('input[name="visualizacion"]:checked').value;
 
   if (!nombre || !rol) {
     alert("Por favor, completa tu nombre y selecciona un rol.");
@@ -67,9 +80,14 @@ document.getElementById('iniciarBtn').addEventListener('click', () => {
   // Guardar en localStorage por si lo necesitas en piloto.html
   localStorage.setItem('nombreUsuario', nombre);
   localStorage.setItem('rolUsuario', rol);
+  localStorage.setItem('visualizacion', visualizacion);
 
   // Ir a la siguiente página
-  window.location.href = "piloto.html";
+  if (visualizacion === 'dashboard') {
+    window.location.href = "44444.html";
+  } else {
+    window.location.href = "piloto.html";
+  }
 });
 </script>
 

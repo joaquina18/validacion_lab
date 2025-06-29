@@ -57,6 +57,10 @@
   </style>
 </head>
 <body class="skin-green sidebar-mini">
+  <div id="usuarioHeader" style="display:flex; align-items:center; justify-content:center; margin-top:30px; margin-bottom:10px;">
+    <i class="fas fa-user-circle" style="font-size:2.5rem; color:#43ac3a; margin-right:10px;"></i>
+    <span id="nombreUsuarioHeader" style="font-size:1.3rem; font-weight:600; color:#222;"></span>
+  </div>
   <a href="index.html" class="btn btn-default m-3">
     <i class="fas fa-arrow-left"></i> Volver al inicio
   </a>
@@ -72,12 +76,6 @@
           <label for="sedeFilter">Sede:</label>
           <select id="sedeFilter" class="form-control">
             <option value="">Todas las sedes</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label for="validadorFilter">Validador:</label>
-          <select id="validadorFilter" class="form-control" multiple size="3">
-            <option value="">Todos los validadores</option>
           </select>
         </div>
         <div class="col-md-2">
@@ -125,7 +123,6 @@
             <th data-col="fecha" class="sortable">Fecha <span class="sort-icon">⇅</span></th>
             <th data-col="codigo" class="sortable">Código de examen <span class="sort-icon">⇅</span></th>
             <th data-col="sede" class="sortable">Sede <span class="sort-icon">⇅</span></th>
-            <th data-col="validador" class="sortable">Validador asignado <span class="sort-icon">⇅</span></th>
             <th data-col="turno" class="sortable">Turno <span class="sort-icon">⇅</span></th>
             <th data-col="prioridad" class="sortable">Prioridad <span class="sort-icon">⇅</span></th>
             <th data-col="cumplimiento" class="sortable">Estado <span class="sort-icon">⇅</span></th>
@@ -145,7 +142,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" id="cerrarModalValidar"><span aria-hidden="true">×</span></button>
-          <h4 class="modal-title" id="modalTitulo">Validar resultado</h4>
+          <h4 class="modal-title" id="modalTitulo">Ingresar resultado</h4>
         </div>
         <div class="modal-body">
           <div style="margin-bottom: 10px">
@@ -157,13 +154,28 @@
             <label for="modalComentario"><b>Comentario:</b></label>
             <textarea class="form-control" id="modalComentario" rows="2" placeholder="Agregue un comentario opcional..."></textarea>
           </div>
+          <div id="trazabilidadSection" style="background:#f4f4f4; border-radius:5px; padding:10px; margin-top:10px; display:none;">
+            <b>Trazabilidad:</b>
+            <div id="trazabilidadContent"></div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" id="btnAgregarComentario">Agregar comentario</button>
-          <button type="button" class="btn btn-primary" id="btnValidarModal">Validar</button>
+          <button type="button" class="btn btn-primary" id="btnValidarModal">Ingresar y solicitar validación</button>
           <button type="button" class="btn btn-default" id="btnCerrarModal">Cerrar</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Agregar overlay de proceso -->
+  <div id="procesoOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:10px; padding:40px 30px; min-width:300px; text-align:center; box-shadow:0 2px 16px #0002;">
+      <h4 id="procesoPaso">Procesando...</h4>
+      <div id="procesoSpinner" style="margin:20px auto;">
+        <i class="fas fa-spinner fa-spin fa-2x" style="color:#43ac3a;"></i>
+      </div>
+      <button id="procesoOkBtn" class="btn btn-success mt-3" style="display:none;">OK</button>
     </div>
   </div>
 
@@ -204,59 +216,31 @@
     // Función para cargar las opciones de los filtros
     function cargarFiltros() {
       const sedes = [...new Set(datosOriginales.map(d => d.sede))].sort();
-      const validadores = [...new Set(datosOriginales.map(d => d.validador))].sort();
-      
       const sedeSelect = document.getElementById('sedeFilter');
-      const validadorSelect = document.getElementById('validadorFilter');
-      
-      // Limpiar opciones existentes
       sedeSelect.innerHTML = '<option value="">Todas las sedes</option>';
-      validadorSelect.innerHTML = '<option value="">Todos los validadores</option>';
-      
       sedes.forEach(sede => {
         const option = document.createElement('option');
         option.value = sede;
         option.textContent = sede;
         sedeSelect.appendChild(option);
       });
-      
-      validadores.forEach(validador => {
-        const option = document.createElement('option');
-        option.value = validador;
-        option.textContent = validador;
-        validadorSelect.appendChild(option);
-      });
     }
 
     // Función para aplicar filtros
     function aplicarFiltros() {
       const sedeFiltro = document.getElementById('sedeFilter').value;
-      const validadorSelect = document.getElementById('validadorFilter');
-      const validadoresSeleccionados = Array.from(validadorSelect.selectedOptions).map(option => option.value);
       const estadoFiltro = document.getElementById('estadoFilter').value;
       const prioridadFiltro = document.getElementById('prioridadFilter').value;
       
       // Debug: mostrar valores de filtros
       console.log('Filtros aplicados:', {
         sede: sedeFiltro,
-        validadores: validadoresSeleccionados,
         estado: estadoFiltro,
         prioridad: prioridadFiltro
       });
       
       datosFiltrados = datosOriginales.filter(registro => {
         const cumpleSede = !sedeFiltro || registro.sede === sedeFiltro;
-        
-        // Lógica corregida para el filtro de validador
-        let cumpleValidador = true;
-        if (validadoresSeleccionados.length > 0) {
-          // Filtrar por validadores seleccionados, excluyendo la opción "Todos los validadores"
-          const validadoresReales = validadoresSeleccionados.filter(v => v !== '');
-          if (validadoresReales.length > 0) {
-            cumpleValidador = validadoresReales.includes(registro.validador);
-          }
-        }
-        
         const cumpleEstado = estadoFiltro === '' || registro.cumplimiento === estadoFiltro;
         const cumplePrioridad = !prioridadFiltro || registro.prioridad === prioridadFiltro;
         
@@ -265,7 +249,7 @@
           console.log('Registro:', registro.codigo, 'Prioridad:', registro.prioridad, 'Filtro:', prioridadFiltro, 'Cumple:', cumplePrioridad);
         }
         
-        return cumpleSede && cumpleValidador && cumpleEstado && cumplePrioridad;
+        return cumpleSede && cumpleEstado && cumplePrioridad;
       });
       
       console.log('Registros filtrados:', datosFiltrados.length);
@@ -318,10 +302,12 @@
         const estadoClass = registro.cumplimiento === '1' ? 'status-completed' : 'status-pending';
         const estadoText = registro.cumplimiento === '1' ? 'Completado' : 'Pendiente';
         const prioridadClass = `priority-${registro.prioridad.toLowerCase()}`;
-        const botonClass = registro.cumplimiento === '1' ? 'btn-secondary' : 'btn-success';
-        const botonText = registro.cumplimiento === '1' ? 'Validado' : 'Validar';
-        const botonDisabled = registro.cumplimiento === '1' ? 'disabled' : '';
-        // Guardar el índice original para orden por ID
+        let accionHtml = '';
+        if (registro.cumplimiento === '1') {
+          accionHtml = `<span class='text-success'>Resultados ingresados</span>`;
+        } else {
+          accionHtml = `<button class='btn btn-primary btn-sm' onclick="validarRegistro('${registro.codigo}')">Ingresar resultados</button>`;
+        }
         registro.__rowIndex = registro.__rowIndex !== undefined ? registro.__rowIndex : index + 1;
         return `
           <tr>
@@ -329,15 +315,10 @@
             <td>${registro.fecha}</td>
             <td>${registro.codigo}</td>
             <td>${registro.sede}</td>
-            <td>${registro.validador}</td>
             <td>${registro.turno}</td>
             <td class="${prioridadClass}">${registro.prioridad}</td>
             <td><span class="${estadoClass}">${estadoText}</span></td>
-            <td>
-              <button class="btn ${botonClass}" ${botonDisabled} onclick="validarRegistro('${registro.codigo}')">
-                ${botonText}
-              </button>
-            </td>
+            <td>${accionHtml}</td>
           </tr>
         `;
       }).join('');
@@ -352,6 +333,28 @@
         document.getElementById('modalCodigo').textContent = codigo;
         document.getElementById('modalResultado').value = resultadoPorCodigo[codigo] || '';
         document.getElementById('modalComentario').value = comentariosPorCodigo[codigo] || '';
+        // Mostrar trazabilidad dummy
+        const trazabilidad = [
+          { n: 1, fecha: '07/01/2025 16:08:43', usuario: 'Alejandro Martín Torres Blanco', accion: 'Registro de atención <code title="Sucursal de la atención">La Molina</code>' },
+          { n: 2, fecha: '07/01/2025 16:08:43', usuario: 'Alejandro Martín Torres Blanco', accion: 'Muestra a ser recibida HCGCLT <code title="Sucursal activa al momento de registrar trazabilidad">La Molina</code>' },
+          { n: 3, fecha: '07/01/2025 18:17:25', usuario: 'Alejandro Martín Torres Blanco', accion: 'Recibida en sede HCGCLT <code title="Sucursal activa al momento de registrar trazabilidad">La Molina</code>' },
+          { n: 4, fecha: '07/01/2025 18:17:47', usuario: 'Alejandro Martín Torres Blanco', accion: 'Ingresando resultado HCGCLT por Alfredo Alexander Reyes Blanco <code title="Sucursal activa al momento de registrar trazabilidad">La Molina</code>' },
+        ];
+        let trazabilidadHtml = '';
+        if (trazabilidad.length > 0) {
+          trazabilidadHtml += `<ul style='padding-left:18px;'>`;
+          trazabilidad.forEach(item => {
+            trazabilidadHtml += `<li><b>#${item.n}</b> [${item.fecha}] <b>${item.usuario}</b>: <span>${item.accion}</span></li>`;
+          });
+          trazabilidadHtml += `</ul>`;
+          trazabilidadSection.style.display = 'block';
+        } else {
+          trazabilidadHtml = '<i>No hay trazabilidad previa para este registro.</i>';
+          trazabilidadSection.style.display = 'block';
+        }
+        trazabilidadContent.innerHTML = trazabilidadHtml;
+        // Cambiar texto del botón principal
+        document.getElementById('btnValidarModal').innerText = 'Ingresar y solicitar validación';
         document.getElementById('modalValidar').style.display = 'block';
       }
     }
@@ -359,13 +362,6 @@
     // Función para limpiar filtros
     function limpiarFiltros() {
       document.getElementById('sedeFilter').value = '';
-      
-      // Limpiar selección múltiple de validadores
-      const validadorSelect = document.getElementById('validadorFilter');
-      Array.from(validadorSelect.options).forEach(option => {
-        option.selected = false;
-      });
-      
       document.getElementById('estadoFilter').value = '';
       document.getElementById('prioridadFilter').value = '';
       aplicarFiltros();
@@ -373,10 +369,12 @@
 
     // Event listeners
     document.addEventListener('DOMContentLoaded', function() {
+      // Mostrar nombre de usuario en el header
+      const nombreUsuario = localStorage.getItem('nombreUsuario') || '';
+      document.getElementById('nombreUsuarioHeader').textContent = nombreUsuario;
       cargarDatos();
       
       document.getElementById('sedeFilter').addEventListener('change', aplicarFiltros);
-      document.getElementById('validadorFilter').addEventListener('change', aplicarFiltros);
       document.getElementById('estadoFilter').addEventListener('change', aplicarFiltros);
       document.getElementById('prioridadFilter').addEventListener('change', aplicarFiltros);
       document.getElementById('limpiarFiltros').addEventListener('click', limpiarFiltros);
@@ -430,13 +428,42 @@
         // Guardar comentario y resultado
         comentariosPorCodigo[codigoActualModal] = document.getElementById('modalComentario').value;
         resultadoPorCodigo[codigoActualModal] = document.getElementById('modalResultado').value;
-        // Validar registro
+        // Cambiar a pendiente de validación
         const registro = datosOriginales.find(r => r.codigo === codigoActualModal);
         if (registro) {
-          registro.cumplimiento = '1';
-          aplicarFiltros();
-          cerrarModalValidar();
-          alert(`Registro ${codigoActualModal} validado exitosamente`);
+          // Mostrar overlay de proceso
+          document.getElementById('modalValidar').style.display = 'none';
+          const overlay = document.getElementById('procesoOverlay');
+          const paso = document.getElementById('procesoPaso');
+          const okBtn = document.getElementById('procesoOkBtn');
+          okBtn.style.display = 'none';
+          overlay.style.display = 'flex';
+          paso.innerText = 'Procesando...';
+          setTimeout(() => {
+            paso.innerText = 'Asignando validación...';
+            setTimeout(() => {
+              const validadores = ['Jonathan Sánchez', 'Kelly Rojas', 'Alexandra Aguilar'];
+              const validador = validadores[Math.floor(Math.random() * validadores.length)];
+              paso.innerHTML = `Prueba asignada a <b>${validador}</b>`;
+              document.getElementById('procesoSpinner').style.display = 'none';
+              okBtn.style.display = 'inline-block';
+              okBtn.onclick = function() {
+                overlay.style.display = 'none';
+                registro.cumplimiento = '1';
+                aplicarFiltros();
+                cerrarModalValidar();
+                // Redirigir según el rol guardado en localStorage
+                const rol = localStorage.getItem('rolUsuario');
+                if (rol === 'validador') {
+                  window.location.href = 'validacion.html';
+                } else if (rol === 'calidad') {
+                  window.location.href = 'calidad.html';
+                } else {
+                  window.location.href = 'index.html';
+                }
+              };
+            }, 1500);
+          }, 1200);
         }
       }
     };
