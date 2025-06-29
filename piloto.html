@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Validación de Pruebas</title>
+  <title>Ingreso de resultados</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   <!-- Estilos de Optimus -->
@@ -62,7 +62,7 @@
   </a>
 
   <div class="container">
-    <h2 class="text-center mt-4">Panel de Validación Automatizada</h2>
+    <h2 class="text-center mt-4">Panel de Resultados</h2>
     
     <!-- Sección de Filtros -->
     <div class="filter-section">
@@ -150,23 +150,8 @@
         <div class="modal-body">
           <div style="margin-bottom: 10px">
             <b>Código de examen:</b> <span id="modalCodigo"></span><br>
-            <b>Resultado de Glucosa:</b> <span id="modalResultadoTexto">78 mg/dL</span>
-          </div>
-          <div style="margin-bottom: 20px; min-height: 200px; max-height: 350px; overflow-y: auto;">
-            <h5><b>Trazabilidad de la Atención</b></h5>
-            <table class="table table-hover table-bordered">
-              <thead>
-                <tr bgcolor="#a8e0b6">
-                  <th class="text-center">#</th>
-                  <th class="text-center">Fecha y Hora</th>
-                  <th class="text-center">Usuario</th>
-                  <th class="text-center">Acción</th>
-                </tr>
-              </thead>
-              <tbody id="modalTrazabilidadBody">
-                <!-- Se llenará dinámicamente -->
-              </tbody>
-            </table>
+            <b>Resultado de Glucosa:</b>
+            <input type="number" class="form-control" id="modalResultado" placeholder="Ingrese resultado de glucosa">
           </div>
           <div style="margin-bottom: 10px">
             <label for="modalComentario"><b>Comentario:</b></label>
@@ -365,26 +350,8 @@
       const registro = datosOriginales.find(r => r.codigo === codigo);
       if (registro) {
         document.getElementById('modalCodigo').textContent = codigo;
-        // Mostrar resultado de glucosa (dummy o de memoria)
-        let resultado = resultadoPorCodigo[codigo] || '78';
-        document.getElementById('modalResultadoTexto').textContent = resultado + ' mg/dL';
+        document.getElementById('modalResultado').value = resultadoPorCodigo[codigo] || '';
         document.getElementById('modalComentario').value = comentariosPorCodigo[codigo] || '';
-        // Llenar trazabilidad dummy
-        const trazabilidad = [
-          { n: 1, fecha: '07/01/2025 16:08:43', usuario: 'Alejandro Martín Torres Blanco', accion: 'Registro de atención <code title="Sucursal de la atención">La Molina</code>' },
-          { n: 2, fecha: '07/01/2025 16:08:43', usuario: 'Alejandro Martín Torres Blanco', accion: 'Muestra a ser recibida HCGCLT <code title="Sucursal activa al momento de registrar trazabilidad">La Molina</code>' },
-          { n: 3, fecha: '07/01/2025 18:17:25', usuario: 'Alejandro Martín Torres Blanco', accion: 'Recibida en sede HCGCLT <code title="Sucursal activa al momento de registrar trazabilidad">La Molina</code>' },
-          { n: 4, fecha: '07/01/2025 18:17:47', usuario: 'Alejandro Martín Torres Blanco', accion: 'Ingresando resultado HCGCLT por Alfredo Alexander Reyes Blanco <code title="Sucursal activa al momento de registrar trazabilidad">La Molina</code>' },
-          
-        ];
-        document.getElementById('modalTrazabilidadBody').innerHTML = trazabilidad.map(row => `
-          <tr>
-            <td class="text-center">${row.n}</td>
-            <td class="text-center"><b>${row.fecha.split(' ')[0]}</b> <br> ${row.fecha.split(' ')[1]}</td>
-            <td class="text-center">${row.usuario}</td>
-            <td>${row.accion}</td>
-          </tr>
-        `).join('');
         document.getElementById('modalValidar').style.display = 'block';
       }
     }
@@ -452,7 +419,7 @@
     document.getElementById('btnAgregarComentario').onclick = function() {
       if (codigoActualModal) {
         comentariosPorCodigo[codigoActualModal] = document.getElementById('modalComentario').value;
-        resultadoPorCodigo[codigoActualModal] = document.getElementById('modalResultadoTexto').textContent.split(' ')[0];
+        resultadoPorCodigo[codigoActualModal] = document.getElementById('modalResultado').value;
         alert('Comentario guardado.');
       }
     };
@@ -462,7 +429,7 @@
       if (codigoActualModal) {
         // Guardar comentario y resultado
         comentariosPorCodigo[codigoActualModal] = document.getElementById('modalComentario').value;
-        resultadoPorCodigo[codigoActualModal] = document.getElementById('modalResultadoTexto').textContent.split(' ')[0];
+        resultadoPorCodigo[codigoActualModal] = document.getElementById('modalResultado').value;
         // Validar registro
         const registro = datosOriginales.find(r => r.codigo === codigoActualModal);
         if (registro) {
